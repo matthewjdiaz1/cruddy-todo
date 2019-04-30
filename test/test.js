@@ -108,11 +108,12 @@ describe('todos', () => {
 
   describe('readAll', () => {
     it('should return an empty array when there are no todos', (done) => {
-      todos.readAll((err, todoList) => {
-        expect(err).to.be.null;
-        expect(todoList.length).to.equal(0);
-        done();
-      });
+      todos.readAll()
+        .then(todoList => {
+          expect(todoList.length).to.equal(0);
+          done();
+        })
+        .catch(done);
     });
 
     // Refactor this test when completing `readAll`
@@ -122,16 +123,20 @@ describe('todos', () => {
       const expectedTodoList = [{ id: '00001', text: '00001' }, { id: '00002', text: '00002' }];
       todos.create(todo1text, (err, todo) => {
         todos.create(todo2text, (err, todo) => {
-          todos.readAll((err, todoList) => {
-            expect(todoList).to.have.lengthOf(2);
-            expect(todoList).to.deep.include.members(expectedTodoList, 'NOTE: Text field should use the Id initially');
-            done();
-          });
+          todos.readAll()
+            .then(todoList => {
+              expect(todoList).to.have.lengthOf(2);
+              expect(todoList).to.deep.include.members(expectedTodoList, 'NOTE: Text field should use the Id initially');
+              done();
+            })
+            .catch(done);
         });
       });
     });
-
   });
+
+  // expect(todoList).to.have.lengthOf(2);
+  // expect(todoList).to.deep.include.members(expectedTodoList, 'NOTE: Text field should use the Id initially');
 
   describe('readOne', () => {
     it('should return an error for non-existant todo', (done) => {

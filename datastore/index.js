@@ -20,19 +20,20 @@ exports.create = (text, callback) => {
   });
 };
 
-exports.readAll = (callback) => {
-  fs.readdir(exports.dataDir, (err, files) => {
-    if (err) {
-      return console.log('Unable to scan directory: ' + err);
-    } else {
-      var output = [];
-      files.forEach(file => {
-        let id = path.basename(file, '.txt');
-        output.push({ id, text: id });
-      });
-      console.log(output);
-      callback(err, output);
-    }
+exports.readAll = () => {
+  return new Promise((resolve, reject) => {
+    fs.readdir(exports.dataDir, (err, files) => {
+      if (err) {
+        reject('Unable to scan directory: ' + err);
+      } else {
+        var output = [];
+        files.forEach(file => {
+          let id = path.basename(file, '.txt');
+          output.push({ id, text: id });
+        });
+        resolve(output);
+      }
+    });
   });
   // var data = _.map(items, (text, id) => {
   //   return { id, text };
@@ -67,7 +68,6 @@ exports.update = (id, text, callback) => {
         if (err) {
           console.log('error writing file');
         } else {
-          console.log(text);
           // console.log(id, data);
           callback(null, { id, text });
         }
