@@ -25,7 +25,13 @@ exports.readAll = (callback) => {
     if (err) {
       return console.log('Unable to scan directory: ' + err);
     } else {
-      callback(err, files);
+      var output = [];
+      files.forEach(file => {
+        let id = path.basename(file, '.txt');
+        output.push({ id, text: id });
+      });
+      console.log(output);
+      callback(err, output);
     }
   });
   // var data = _.map(items, (text, id) => {
@@ -80,14 +86,22 @@ exports.update = (id, text, callback) => {
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback();
-  }
+  fs.unlink(`${exports.dataDir}/${id}.txt`, (err) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback();
+    }
+  });
+
+  // var item = items[id];
+  // delete items[id];
+  // if (!item) {
+  //   // report an error if item not found
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback();
+  // }
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
